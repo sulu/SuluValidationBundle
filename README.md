@@ -1,4 +1,4 @@
-# Sulu Validation Bundle
+# Sulu Validation Bundle [![StyleCI](https://styleci.io/repos/67592167/shield)](https://styleci.io/repos/67592167)
 
 This bundle validates requests for pre-configured routes.
  
