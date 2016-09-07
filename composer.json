@@ -1,0 +1,28 @@
+{
+    "name": "sulu/validation-bundle",
+    "type": "validation-bundle",
+    "description": "This bundle is for validation of schemas",
+    "license": "MIT",
+    "keywords": ["sulu", "schema", "validation"],
+    "authors": [
+        {
+            "name": "Sulu Community",
+            "homepage": "https://github.com/massiveart/SuluProductBundle/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "symfony/framework-bundle": "~2.8",
+        "symfony/event-dispatcher": "~2.8",
+        "justinrainbow/json-schema": "~1.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Sulu\\Bundle\\ValidationBundle": ""
+        }
+    },
+    "target-dir": "Sulu/Bundle/ValidationBundle"
+}
