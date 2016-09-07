@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="sulu_validation.request_listener"
+                 class="Sulu\Bundle\ValidationBundle\EventListener\ValidationRequestListener">
+            <argument>%sulu_validation.schemas%</argument>
+            <argument type="service" id="file_locator"/>
+
+            <tag name="kernel.event_listener" event="kernel.request" methods="onKernelRequest"/>
+        </service>
+    </services>
+</container>
