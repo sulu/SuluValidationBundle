@@ -13,8 +13,13 @@ namespace Sulu\Bundle\ValidationBundle\EventListener;
 
 use Sulu\Bundle\ValidationBundle\Exceptions\SchemaValidationException;
 use Symfony\Component\Config\FileLocatorInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
+/**
+ * This listener checks for every request if a schema was defined for the current route.
+ * If so, the requests data is validated by the given schema.
+ */
 class ValidationRequestListener
 {
     /**
@@ -48,7 +53,6 @@ class ValidationRequestListener
 
         // Check if route is defined.
         $routeId = $request->get('_route');
-
         if (null === $routeId) {
             return;
         }
@@ -64,14 +68,17 @@ class ValidationRequestListener
 
         // Create data object from request and query.
         $data = array_merge($request->request->all(), $request->query->all());
+        // FIXME: Validator should also be able to handle array data.
+        // https://github.com/sulu/SuluValidationBundle/issues/3
         $dataObject = json_decode(json_encode($data));
 
         // Validate data with given schema.
         $validator = new \JsonSchema\Validator();
         $validator->check($dataObject, $schema);
 
+        // Return error response if data is not valid.
         if (!$validator->isValid()) {
-            throw new SchemaValidationException($validator->getErrors());
+            $event->setResponse(new Response(json_encode($validator->getErrors()), 400));
         }
     }
 }

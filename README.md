@@ -48,7 +48,6 @@ public function prepend(ContainerBuilder $container)
         );
     }
 }
-
 ```
 
 ### 3. Define your schema:
@@ -85,9 +84,3 @@ sulu_validation:
     schemas:
         example_route_id: '@AnotherBundle/Validation/anotherActionSchema.json'
 ```
-
-
-
-
-
-

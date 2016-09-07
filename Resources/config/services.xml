@@ -12,10 +12,5 @@
 
             <tag name="kernel.event_listener" event="kernel.request" methods="onKernelRequest"/>
         </service>
-
-        <service id="massive_validation.exception_listener"
-                 class="Sulu\Bundle\ValidationBundle\EventListener\ExceptionListener">
-            <tag name="kernel.event_listener" event="kernel.exception" method="onKernelException"/>
-        </service>
     </services>
 </container>

@@ -16,6 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+/**
+ * Class that loads and manages the bundle configuration.
+ */
 class SuluValidationExtension extends Extension
 {
     /**

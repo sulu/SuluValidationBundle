@@ -11,9 +11,10 @@
 
 namespace Sulu\Bundle\ValidationBundle\Exceptions;
 
-use Exception;
-
-class SchemaValidationException extends Exception
+/**
+ * Exception that indicates that schema validation was not successful.
+ */
+class SchemaValidationException extends \Exception
 {
     /**
      * @param array $errors

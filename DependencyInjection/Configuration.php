@@ -14,6 +14,9 @@ namespace Sulu\Bundle\ValidationBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Class that validates and merges configuration from your app/config files.
+ */
 class Configuration implements ConfigurationInterface
 {
     /**
