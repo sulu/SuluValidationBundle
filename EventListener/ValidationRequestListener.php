@@ -72,6 +72,10 @@ class ValidationRequestListener
         // https://github.com/sulu/SuluValidationBundle/issues/3
         $dataObject = json_decode(json_encode($data));
 
+        if (!$dataObject) {
+            $dataObject = new \stdClass();
+        }
+
         // Validate data with given schema.
         $validator = new \JsonSchema\Validator();
         $validator->check($dataObject, $schema);
