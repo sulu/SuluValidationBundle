@@ -1,0 +1,14 @@
+test_no_validation:
+    path: /no-validation
+    defaults:
+        _controller: app.tests.controller:testValidationAction
+
+test_get_validation:
+    path: /get-validation
+    defaults:
+        _controller: app.tests.controller:testValidationAction
+
+test_post_validation:
+    path: /post-validation
+    defaults:
+        _controller: app.tests.controller:testValidationAction
