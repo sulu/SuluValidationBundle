@@ -1,0 +1,13 @@
+{
+    "title": "Schema for test validation GET",
+    "type": "object",
+    "properties": {
+        "locale": {
+            "type": "string",
+            "minLength": 2
+        }
+    },
+    "required": [
+        "locale"
+    ]
+}
