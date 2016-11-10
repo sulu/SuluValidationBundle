@@ -66,6 +66,18 @@ class ValidationRequestListener
         $schemaFile = $this->fileLocator->locate($this->schemas[$routeId]);
         $schema = json_decode(file_get_contents($schemaFile));
 
+        // Check if json is invalid.
+        if ((json_last_error() !== JSON_ERROR_NONE)) {
+            $event->setResponse(
+                new Response(
+                    json_encode(['message' => sprintf('No valid json found in file \'%s\'', $schemaFile)]),
+                    500
+                )
+            );
+
+            return;
+        }
+
         // Create data object from request and query.
         $data = array_merge($request->request->all(), $request->query->all());
         // FIXME: Validator should also be able to handle array data.

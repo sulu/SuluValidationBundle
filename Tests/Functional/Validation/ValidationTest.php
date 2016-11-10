@@ -94,6 +94,17 @@ class ValidationTest extends WebTestCase
     }
 
     /**
+     * Tests what happens if schema file contains invalid json.
+     */
+    public function testValidateInvalidSchema()
+    {
+        $this->client->request('POST', '/invalid-schema');
+        $this->assertEquals(500, $this->client->getResponse()->getStatusCode());
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertContains('No valid json found in file', $responseContent['message']);
+    }
+
+    /**
      * Tests if response contains expected properties.
      *
      * @param array $responseContent
