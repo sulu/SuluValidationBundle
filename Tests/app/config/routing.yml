@@ -12,3 +12,8 @@ test_post_validation:
     path: /post-validation
     defaults:
         _controller: app.tests.controller:testValidationAction
+
+test_invalid_schema:
+    path: /invalid-schema
+    defaults:
+        _controller: app.tests.controller:testValidationAction

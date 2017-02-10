@@ -1,4 +1,12 @@
+# composer
 composer.lock
 vendor
+
+# phpunit
 Tests/app/cache
 Tests/app/logs
+phpunit.xml
+
+# intellij
+*.iml
+/.idea
