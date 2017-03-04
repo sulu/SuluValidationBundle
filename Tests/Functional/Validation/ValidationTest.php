@@ -126,7 +126,7 @@ class ValidationTest extends WebTestCase
     }
 
     /**
-     *  Tests if missing shipping address and missing zip of billing address are detected
+     *  Tests if missing shipping address and missing zip of billing address are detected.
      */
     public function testValidationOfSchemaWithInlineRefsAndErrors()
     {
@@ -135,7 +135,7 @@ class ValidationTest extends WebTestCase
                 'street' => 'Teststreet',
                 'city' => 'Testcity',
                 'country' => 'Testcountry',
-            ]
+            ],
         ];
 
         $this->client->request('POST', '/schema-with-inline-refs', $data);

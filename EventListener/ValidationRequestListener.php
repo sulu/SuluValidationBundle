@@ -92,7 +92,7 @@ class ValidationRequestListener
         }
 
         $schemaStorage = new SchemaStorage();
-        $schemaStorage->addSchema('file://'.$routeId, $schema);
+        $schemaStorage->addSchema('file://' . $routeId, $schema);
         $validator = new Validator(new Factory($schemaStorage));
         $validator->check($dataObject, $schema);
 
