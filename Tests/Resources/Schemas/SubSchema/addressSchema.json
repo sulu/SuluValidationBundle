@@ -1,5 +1,5 @@
 {
-  "title": "Schema for test validation with inline refs",
+  "title": "Schema for an address",
   "type": "object",
   "definitions": {
     "address": {
@@ -25,21 +25,5 @@
         }
       }
     }
-  },
-  "properties": {
-    "billingAddress": {
-      "type": {
-        "$ref": "#/definitions/address"
-      }
-    },
-    "shippingAddress": {
-      "type": {
-        "$ref": "#/definitions/address"
-      }
-    }
-  },
-  "required": [
-    "billingAddress",
-    "shippingAddress"
-  ]
+  }
 }
