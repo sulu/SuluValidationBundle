@@ -1,0 +1,43 @@
+{
+  "title": "Schema for test validation with inline refs",
+  "type": "object",
+  "definitions": {
+    "address": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string",
+          "required": true
+        },
+        "zip": {
+          "type": "string",
+          "required": true
+        },
+        "street": {
+          "type": "string",
+          "required": true
+        },
+        "country": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  },
+  "properties": {
+    "billingAddress": {
+      "type": {
+        "$ref": "#/definitions/address"
+      }
+    },
+    "shippingAddress": {
+      "type": {
+        "$ref": "#/definitions/address"
+      }
+    }
+  },
+  "required": [
+    "billingAddress",
+    "shippingAddress"
+  ]
+}

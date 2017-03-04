@@ -14,4 +14,5 @@ sulu_validation:
         test_get_validation: '@SuluValidationBundle/Tests/Resources/Schemas/getActionSchema.json'
         test_post_validation: '@SuluValidationBundle/Tests/Resources/Schemas/postActionSchema.json'
         test_invalid_schema: '@SuluValidationBundle/Tests/Resources/Schemas/invalidSchema.json'
+        test_schema_with_inline_refs: '@SuluValidationBundle/Tests/Resources/Schemas/schemaWithInlineRefs.json'
 
