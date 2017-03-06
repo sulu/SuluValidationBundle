@@ -104,6 +104,86 @@ class ValidationTest extends WebTestCase
         $this->assertContains('No valid json found in file', $responseContent['message']);
     }
 
+    public function testValidationOfSchemaWithInlineRefs()
+    {
+        $data = [
+            'billingAddress' => [
+                'street' => 'Teststreet',
+                'city' => 'Testcity',
+                'zip' => 'ABC1234',
+                'country' => 'Testcountry',
+            ],
+            'shippingAddress' => [
+                'street' => 'Teststreet',
+                'city' => 'Testcity',
+                'zip' => 'ABC1234',
+                'country' => 'Testcountry',
+            ],
+        ];
+
+        $this->client->request('POST', '/schema-with-inline-refs', $data);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testValidationOfSchemaWithRefs()
+    {
+        $data = [
+            'billingAddress' => [
+                'street' => 'Teststreet',
+                'city' => 'Testcity',
+                'zip' => 'ABC1234',
+                'country' => 'Testcountry',
+            ],
+            'shippingAddress' => [
+                'street' => 'Teststreet',
+                'city' => 'Testcity',
+                'zip' => 'ABC1234',
+                'country' => 'Testcountry',
+            ],
+        ];
+
+        $this->client->request('POST', '/schema-with-refs', $data);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    /**
+     *  Tests if missing shipping address and missing zip of billing address are detected when using inline refs.
+     */
+    public function testValidationOfSchemaWithInlineRefsAndErrors()
+    {
+        $data = [
+            'billingAddress' => [
+                'street' => 'Teststreet',
+                'city' => 'Testcity',
+                'country' => 'Testcountry',
+            ],
+        ];
+
+        $this->client->request('POST', '/schema-with-inline-refs', $data);
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseContainsProperties($responseContent, ['shippingAddress', 'billingAddress.zip']);
+    }
+
+    /**
+     *  Tests if missing shipping address and missing zip of billing address are detected when using refs.
+     */
+    public function testValidationOfSchemaWithRefsAndErrors()
+    {
+        $data = [
+            'billingAddress' => [
+                'street' => 'Teststreet',
+                'city' => 'Testcity',
+                'country' => 'Testcountry',
+            ],
+        ];
+
+        $this->client->request('POST', '/schema-with-refs', $data);
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $responseContent = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertResponseContainsProperties($responseContent, ['shippingAddress', 'billingAddress.zip']);
+    }
+
     /**
      * Tests if response contains expected properties.
      *

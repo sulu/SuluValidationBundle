@@ -11,6 +11,9 @@
 
 namespace Sulu\Bundle\ValidationBundle\EventListener;
 
+use JsonSchema\Constraints\Factory;
+use JsonSchema\SchemaStorage;
+use JsonSchema\Validator;
 use Sulu\Bundle\ValidationBundle\Exceptions\SchemaValidationException;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,8 +91,9 @@ class ValidationRequestListener
             $dataObject = new \stdClass();
         }
 
-        // Validate data with given schema.
-        $validator = new \JsonSchema\Validator();
+        $schemaStorage = new SchemaStorage();
+        $schemaStorage->addSchema('file://' . $schemaFile, $schema);
+        $validator = new Validator(new Factory($schemaStorage));
         $validator->check($dataObject, $schema);
 
         // Return error response if data is not valid.

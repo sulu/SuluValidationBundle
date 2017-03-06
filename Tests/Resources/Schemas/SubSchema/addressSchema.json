@@ -1,0 +1,29 @@
+{
+  "title": "Schema for an address",
+  "type": "object",
+  "definitions": {
+    "address": {
+      "type": "object",
+      "required": [
+        "zip",
+        "city",
+        "street",
+        "country"
+      ],
+      "properties": {
+        "city": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        },
+        "street": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
