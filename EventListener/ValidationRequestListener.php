@@ -12,10 +12,9 @@
 namespace Sulu\Bundle\ValidationBundle\EventListener;
 
 use JsonSchema\Constraints\Factory;
-use JsonSchema\SchemaStorage;
 use JsonSchema\Validator;
 use Sulu\Bundle\ValidationBundle\Exceptions\SchemaValidationException;
-use Symfony\Component\Config\FileLocatorInterface;
+use Sulu\Bundle\ValidationBundle\JsonSchema\CachedSchemaStorage;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
@@ -31,18 +30,18 @@ class ValidationRequestListener
     private $schemas;
 
     /**
-     * @var FileLocatorInterface
+     * @var CachedSchemaStorage
      */
-    private $fileLocator;
+    private $schemaStorage;
 
     /**
      * @param array $schemas
-     * @param FileLocatorInterface $fileLocator
+     * @param CachedSchemaStorage $schemaStorage
      */
-    public function __construct(array $schemas, FileLocatorInterface $fileLocator)
+    public function __construct(array $schemas, CachedSchemaStorage $schemaStorage)
     {
         $this->schemas = $schemas;
-        $this->fileLocator = $fileLocator;
+        $this->schemaStorage = $schemaStorage;
     }
 
     /**
@@ -53,35 +52,12 @@ class ValidationRequestListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
-
-        // Check if route is defined.
         $routeId = $request->get('_route');
-        if (null === $routeId) {
+
+        if (null === $routeId || !isset($this->schemas[$routeId])) {
             return;
         }
 
-        // Check if schema for current route is defined.
-        if (!isset($this->schemas[$routeId])) {
-            return;
-        }
-
-        // Get schema file.
-        $schemaFile = $this->fileLocator->locate($this->schemas[$routeId]);
-        $schema = json_decode(file_get_contents($schemaFile));
-
-        // Check if json is invalid.
-        if ((json_last_error() !== JSON_ERROR_NONE)) {
-            $event->setResponse(
-                new Response(
-                    json_encode(['message' => sprintf('No valid json found in file \'%s\'', $schemaFile)]),
-                    500
-                )
-            );
-
-            return;
-        }
-
-        // Create data object from request and query.
         $data = array_merge($request->request->all(), $request->query->all());
         // FIXME: Validator should also be able to handle array data.
         // https://github.com/sulu/SuluValidationBundle/issues/3
@@ -91,10 +67,8 @@ class ValidationRequestListener
             $dataObject = new \stdClass();
         }
 
-        $schemaStorage = new SchemaStorage();
-        $schemaStorage->addSchema('file://' . $schemaFile, $schema);
-        $validator = new Validator(new Factory($schemaStorage));
-        $validator->check($dataObject, $schema);
+        $validator = new Validator(new Factory($this->schemaStorage));
+        $validator->check($dataObject, $this->schemaStorage->getSchemaByRoute($routeId));
 
         // Return error response if data is not valid.
         if (!$validator->isValid()) {

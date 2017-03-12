@@ -8,9 +8,16 @@
         <service id="sulu_validation.request_listener"
                  class="Sulu\Bundle\ValidationBundle\EventListener\ValidationRequestListener">
             <argument>%sulu_validation.schemas%</argument>
-            <argument type="service" id="file_locator"/>
+            <argument type="service" id="sulu_validation.cached_schema_storage"/>
 
             <tag name="kernel.event_listener" event="kernel.request" methods="onKernelRequest"/>
+        </service>
+
+        <service id="sulu_validation.cached_schema_storage"
+                 class="Sulu\Bundle\ValidationBundle\JsonSchema\CachedSchemaStorage">
+            <argument>%sulu_validation.schemas%</argument>
+            <argument type="service" id="file_locator"/>
+            <argument>%sulu_validation.schema_cache%</argument>
         </service>
     </services>
 </container>
