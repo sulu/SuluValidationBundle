@@ -13,7 +13,6 @@ namespace Sulu\Bundle\ValidationBundle\EventListener;
 
 use JsonSchema\Constraints\Factory;
 use JsonSchema\Validator;
-use Sulu\Bundle\ValidationBundle\Exceptions\SchemaValidationException;
 use Sulu\Bundle\ValidationBundle\JsonSchema\CachedSchemaStorage;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -46,8 +45,6 @@ class ValidationRequestListener
 
     /**
      * @param GetResponseEvent $event
-     *
-     * @throws SchemaValidationException
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
@@ -70,7 +67,6 @@ class ValidationRequestListener
         $validator = new Validator(new Factory($this->schemaStorage));
         $validator->check($dataObject, $this->schemaStorage->getSchemaByRoute($routeId));
 
-        // Return error response if data is not valid.
         if (!$validator->isValid()) {
             $event->setResponse(new Response(json_encode($validator->getErrors()), 400));
         }

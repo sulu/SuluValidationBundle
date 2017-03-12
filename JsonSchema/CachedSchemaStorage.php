@@ -5,6 +5,7 @@ namespace Sulu\Bundle\ValidationBundle\JsonSchema;
 use JsonSchema\Entity\JsonPointer;
 use JsonSchema\Iterator\ObjectIterator;
 use JsonSchema\SchemaStorage;
+use Sulu\Bundle\ValidationBundle\Exceptions\MalFormedJsonException;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -36,24 +37,21 @@ class CachedSchemaStorage extends SchemaStorage
     /**
      * @param array $configuredSchemas array containing all file paths to configured schemas
      * @param FileLocatorInterface $fileLocator
-     * @param $cacheFilePath
-     * @param bool $debugMode
-     * @internal param UriRetrieverInterface|null $uriRetriever
-     * @internal param UriResolverInterface|null $uriResolver
+     * @param string $cacheFilePath
+     * @param string $environment
      */
     public function __construct(
         array $configuredSchemas,
         FileLocatorInterface $fileLocator,
         $cacheFilePath,
-        $debugMode = true
+        $environment
     ) {
         parent::__construct();
 
         $this->fileLocator = $fileLocator;
         $this->configuredSchemas = $configuredSchemas;
-        $this->debugMode = $debugMode;
+        $this->debugMode = $environment !== 'prod';
         $this->cacheFilePath = $cacheFilePath;
-
         $this->initializeCache();
     }
 
@@ -90,6 +88,8 @@ class CachedSchemaStorage extends SchemaStorage
      * @param string $schemaPath
      * @param array $serializedSchemas
      * @param array $resources
+     *
+     * @throws MalFormedJsonException
      */
     protected function processSchema($schemaPath, array &$serializedSchemas, array &$resources)
     {
@@ -101,7 +101,7 @@ class CachedSchemaStorage extends SchemaStorage
         $schema = json_decode(file_get_contents($absoluteSchemaPath));
 
         if ((json_last_error() !== JSON_ERROR_NONE)) {
-            return; // TODO what to do with invalid schema example in testcases?
+            throw new MalFormedJsonException('Malformed json encountered in ' . $schemaPath);
         }
 
         if (substr($absoluteSchemaPath, 0, strlen(self::FILE_PREFIX)) !== self::FILE_PREFIX) {

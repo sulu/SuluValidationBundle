@@ -18,6 +18,7 @@
             <argument>%sulu_validation.schemas%</argument>
             <argument type="service" id="file_locator"/>
             <argument>%sulu_validation.schema_cache%</argument>
+            <argument>%kernel.environment%</argument>
         </service>
     </services>
 </container>
