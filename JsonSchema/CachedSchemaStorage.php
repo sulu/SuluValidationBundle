@@ -2,11 +2,13 @@
 
 namespace Sulu\Bundle\ValidationBundle\JsonSchema;
 
+use InvalidArgumentException;
 use JsonSchema\Entity\JsonPointer;
 use JsonSchema\Iterator\ObjectIterator;
 use JsonSchema\SchemaStorage;
 use Sulu\Bundle\ValidationBundle\Exceptions\MalFormedJsonException;
 use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Config\Resource\FileResource;
 
@@ -35,10 +37,10 @@ class CachedSchemaStorage extends SchemaStorage
     private $cacheFilePath;
 
     /**
-     * @param array $configuredSchemas array containing all file paths to configured schemas
+     * @param array                $configuredSchemas array containing all file paths to configured schemas
      * @param FileLocatorInterface $fileLocator
-     * @param string $cacheFilePath
-     * @param string $environment
+     * @param string               $cacheFilePath
+     * @param string               $environment
      */
     public function __construct(
         array $configuredSchemas,
@@ -52,10 +54,9 @@ class CachedSchemaStorage extends SchemaStorage
         $this->configuredSchemas = $configuredSchemas;
         $this->debugMode = $environment !== 'prod';
         $this->cacheFilePath = $cacheFilePath;
-        $this->initializeCache();
     }
 
-    protected function initializeCache()
+    public function initializeCache()
     {
         $schemaCache = new ConfigCache($this->cacheFilePath, $this->debugMode);
 
@@ -70,12 +71,14 @@ class CachedSchemaStorage extends SchemaStorage
             $schemaCache->write(serialize($processedSchemas), $resources);
         }
 
-        $this->schemas = unserialize(file_get_contents($schemaCache->getPath()));;
+        $this->schemas = unserialize(file_get_contents($schemaCache->getPath()));
     }
 
     /**
      * @param string $routeId
+     *
      * @return object
+     * @throws InvalidArgumentException
      */
     public function getSchemaByRoute($routeId)
     {
@@ -86,10 +89,12 @@ class CachedSchemaStorage extends SchemaStorage
 
     /**
      * @param string $schemaPath
-     * @param array $serializedSchemas
-     * @param array $resources
+     * @param array  $serializedSchemas
+     * @param array  $resources
      *
      * @throws MalFormedJsonException
+     * @throws InvalidArgumentException
+     * @throws FileLocatorFileNotFoundException
      */
     protected function processSchema($schemaPath, array &$serializedSchemas, array &$resources)
     {
@@ -100,11 +105,11 @@ class CachedSchemaStorage extends SchemaStorage
         $absoluteSchemaPath = $this->fileLocator->locate($schemaPath);
         $schema = json_decode(file_get_contents($absoluteSchemaPath));
 
-        if ((json_last_error() !== JSON_ERROR_NONE)) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new MalFormedJsonException('Malformed json encountered in ' . $schemaPath);
         }
 
-        if (substr($absoluteSchemaPath, 0, strlen(self::FILE_PREFIX)) !== self::FILE_PREFIX) {
+        if (strpos($absoluteSchemaPath, self::FILE_PREFIX) !== 0) {
             $absoluteSchemaPath = self::FILE_PREFIX . $absoluteSchemaPath;
         }
 
@@ -114,21 +119,23 @@ class CachedSchemaStorage extends SchemaStorage
     }
 
     /**
-     * @param object $schema
+     * @param mixed  $schema
      * @param string $schemaFilePath
-     * @param array $serializedSchemas
-     * @param array $resources
+     * @param array  $serializedSchemas
+     * @param array  $resources
+     *
+     * @throws MalFormedJsonException
+     * @throws InvalidArgumentException
+     * @throws FileLocatorFileNotFoundException
      */
     protected function processReferencesInSchema($schema, $schemaFilePath, array &$serializedSchemas, array &$resources)
     {
         $objectIterator = new ObjectIterator($schema);
         foreach ($objectIterator as $toResolveSchema) {
             if (property_exists($toResolveSchema, '$ref') && is_string($toResolveSchema->{'$ref'})) {
-                $jsonPointer = new JsonPointer(
-                    $this->uriResolver->resolve($toResolveSchema->{'$ref'}, $schemaFilePath)
-                );
+                $uri = $this->uriResolver->resolve($toResolveSchema->{'$ref'}, $schemaFilePath);
+                $jsonPointer = new JsonPointer($uri);
                 $toResolveSchema->{'$ref'} = (string)$jsonPointer;
-
                 $this->processSchema($jsonPointer->getFilename(), $serializedSchemas, $resources);
             }
         }

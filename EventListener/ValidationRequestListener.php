@@ -41,6 +41,7 @@ class ValidationRequestListener
     {
         $this->schemas = $schemas;
         $this->schemaStorage = $schemaStorage;
+        $this->schemaStorage->initializeCache();
     }
 
     /**
