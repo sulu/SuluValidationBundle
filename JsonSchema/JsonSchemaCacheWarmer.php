@@ -13,7 +13,6 @@ class JsonSchemaCacheWarmer implements CacheWarmerInterface
 
     public function __construct(CachedSchemaStorage $cachedSchemaStorage)
     {
-
         $this->cachedSchemaStorage = $cachedSchemaStorage;
     }
 
