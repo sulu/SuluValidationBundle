@@ -41,7 +41,6 @@ class ValidationRequestListener
     {
         $this->schemas = $schemas;
         $this->schemaStorage = $schemaStorage;
-        $this->schemaStorage->initializeCache();
     }
 
     /**
@@ -56,6 +55,7 @@ class ValidationRequestListener
             return;
         }
 
+        $this->schemaStorage->initializeCache();
         $data = array_merge($request->request->all(), $request->query->all());
         // FIXME: Validator should also be able to handle array data.
         // https://github.com/sulu/SuluValidationBundle/issues/3
