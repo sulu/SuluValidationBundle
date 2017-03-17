@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of Sulu.
+ *
+ * (c) MASSIVE ART WebServices GmbH
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 namespace Sulu\Bundle\ValidationBundle\JsonSchema;
 
 use InvalidArgumentException;
@@ -77,7 +86,8 @@ class CachedSchemaStorage extends SchemaStorage
     /**
      * @param string $routeId
      *
-     * @return object
+     * @return mixed
+     *
      * @throws InvalidArgumentException
      */
     public function getSchemaByRoute($routeId)
@@ -135,7 +145,7 @@ class CachedSchemaStorage extends SchemaStorage
             if (property_exists($toResolveSchema, '$ref') && is_string($toResolveSchema->{'$ref'})) {
                 $uri = $this->uriResolver->resolve($toResolveSchema->{'$ref'}, $schemaFilePath);
                 $jsonPointer = new JsonPointer($uri);
-                $toResolveSchema->{'$ref'} = (string)$jsonPointer;
+                $toResolveSchema->{'$ref'} = (string) $jsonPointer;
                 $this->processSchema($jsonPointer->getFilename(), $serializedSchemas, $resources);
             }
         }

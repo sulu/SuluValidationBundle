@@ -33,6 +33,7 @@ class CachedSchemaStorageTest extends WebTestCase
     {
         $container = $this->client->getContainer();
         $cachedSchemaStorage = $container->get('sulu_validation.cached_schema_storage');
+        $cachedSchemaStorage->initializeCache();
         $cacheFilePath = $container->getParameter('sulu_validation.schema_cache');
         $baseDir = 'file://' . substr($container->getParameter('kernel.root_dir'), 0, -3) . 'Resources/Schemas/';
 

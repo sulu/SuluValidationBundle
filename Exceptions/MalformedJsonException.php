@@ -11,7 +11,7 @@
 
 namespace Sulu\Bundle\ValidationBundle\Exceptions;
 
-class MalFormedJsonException extends \Exception
+class MalformedJsonException extends \Exception
 {
     public function __construct($message)
     {
