@@ -50,7 +50,7 @@ class CachedSchemaStorage extends SchemaStorage
     private $cacheFilePath;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $isInitialized = false;
 

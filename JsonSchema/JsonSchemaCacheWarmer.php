@@ -29,7 +29,7 @@ class JsonSchemaCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isOptional()
     {
@@ -37,7 +37,7 @@ class JsonSchemaCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function warmUp($cacheDir)
     {
