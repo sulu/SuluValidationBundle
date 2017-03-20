@@ -13,6 +13,9 @@ namespace Sulu\Bundle\ValidationBundle\JsonSchema;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+/**
+ * Cache warmer for CachedSchemaStorage.
+ */
 class JsonSchemaCacheWarmer implements CacheWarmerInterface
 {
     /**
@@ -25,13 +28,16 @@ class JsonSchemaCacheWarmer implements CacheWarmerInterface
         $this->cachedSchemaStorage = $cachedSchemaStorage;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function isOptional()
     {
         return true;
     }
 
     /**
-     * @param string $cacheDir The cache directory
+     * @inheritdoc
      */
     public function warmUp($cacheDir)
     {

@@ -12,6 +12,7 @@
 namespace Sulu\Bundle\ValidationBundle\EventListener;
 
 use JsonSchema\Constraints\Factory;
+use JsonSchema\SchemaStorageInterface;
 use JsonSchema\Validator;
 use Sulu\Bundle\ValidationBundle\JsonSchema\CachedSchemaStorage;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +36,9 @@ class ValidationRequestListener
 
     /**
      * @param array $schemas
-     * @param CachedSchemaStorage $schemaStorage
+     * @param SchemaStorageInterface $schemaStorage
      */
-    public function __construct(array $schemas, CachedSchemaStorage $schemaStorage)
+    public function __construct(array $schemas, SchemaStorageInterface $schemaStorage)
     {
         $this->schemas = $schemas;
         $this->schemaStorage = $schemaStorage;
@@ -55,7 +56,6 @@ class ValidationRequestListener
             return;
         }
 
-        $this->schemaStorage->initializeCache();
         $data = array_merge($request->request->all(), $request->query->all());
         // FIXME: Validator should also be able to handle array data.
         // https://github.com/sulu/SuluValidationBundle/issues/3

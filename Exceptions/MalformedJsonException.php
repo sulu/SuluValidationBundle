@@ -11,8 +11,14 @@
 
 namespace Sulu\Bundle\ValidationBundle\Exceptions;
 
+/**
+ * This exception is thrown when a malformed json is encountered.
+ */
 class MalformedJsonException extends \Exception
 {
+    /**
+     * @param string $message
+     */
     public function __construct($message)
     {
         parent::__construct($message);

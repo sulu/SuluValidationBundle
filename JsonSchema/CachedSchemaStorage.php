@@ -21,6 +21,10 @@ use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Config\Resource\FileResource;
 
+/**
+ * This schema storage makes use of a config cache to prevent the same schemas multiple times. The cache is build on
+ * base of the values in the sulu_validation.schemas parameter.
+ */
 class CachedSchemaStorage extends SchemaStorage
 {
     const FILE_PREFIX = 'file://';
@@ -46,6 +50,11 @@ class CachedSchemaStorage extends SchemaStorage
     private $cacheFilePath;
 
     /**
+     * @var boolean
+     */
+    private $isInitialized = false;
+
+    /**
      * @param array                $configuredSchemas array containing all file paths to configured schemas
      * @param FileLocatorInterface $fileLocator
      * @param string               $cacheFilePath
@@ -65,28 +74,36 @@ class CachedSchemaStorage extends SchemaStorage
         $this->cacheFilePath = $cacheFilePath;
     }
 
+    /**
+     * Initializes the a config cache from the schemas configured in the sulu_validation.schemas parameter.
+     */
     public function initializeCache()
     {
-        $schemaCache = new ConfigCache($this->cacheFilePath, $this->debugMode);
+        if (!$this->isInitialized) {
+            $schemaCache = new ConfigCache($this->cacheFilePath, $this->debugMode);
 
-        if (!$schemaCache->isFresh()) {
-            $resources = [];
-            $processedSchemas = [];
+            if (!$schemaCache->isFresh()) {
+                $resources = [];
+                $processedSchemas = [];
 
-            foreach ($this->configuredSchemas as $schemaPath) {
-                $this->processSchema($schemaPath, $processedSchemas, $resources);
+                foreach ($this->configuredSchemas as $schemaPath) {
+                    $this->processSchema($schemaPath, $processedSchemas, $resources);
+                }
+
+                $schemaCache->write(serialize($processedSchemas), $resources);
             }
 
-            $schemaCache->write(serialize($processedSchemas), $resources);
+            $this->schemas = unserialize(file_get_contents($schemaCache->getPath()));
+            $this->isInitialized = true;
         }
-
-        $this->schemas = unserialize(file_get_contents($schemaCache->getPath()));
     }
 
     /**
+     * Returns a based on a given route id.
+     *
      * @param string $routeId
      *
-     * @return mixed
+     * @return \stdClass
      *
      * @throws InvalidArgumentException
      */
@@ -98,6 +115,8 @@ class CachedSchemaStorage extends SchemaStorage
     }
 
     /**
+     * Locates, validates and adds schema to the cache.
+     *
      * @param string $schemaPath
      * @param array  $serializedSchemas
      * @param array  $resources
@@ -108,6 +127,8 @@ class CachedSchemaStorage extends SchemaStorage
      */
     protected function processSchema($schemaPath, array &$serializedSchemas, array &$resources)
     {
+        $this->initializeCache();
+
         if (array_key_exists($schemaPath, $serializedSchemas)) {
             return;
         }
@@ -129,10 +150,12 @@ class CachedSchemaStorage extends SchemaStorage
     }
 
     /**
-     * @param mixed  $schema
-     * @param string $schemaFilePath
-     * @param array  $serializedSchemas
-     * @param array  $resources
+     * Resolves references within a given schema and triggers the processing of the newly detected schemas.
+     *
+     * @param \stdClass $schema
+     * @param string    $schemaFilePath
+     * @param array     $serializedSchemas
+     * @param array     $resources
      *
      * @throws MalFormedJsonException
      * @throws InvalidArgumentException
