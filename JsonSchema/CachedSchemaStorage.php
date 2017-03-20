@@ -25,7 +25,7 @@ use Symfony\Component\Config\Resource\FileResource;
  * This schema storage makes use of a config cache to prevent the same schemas multiple times. The cache is build on
  * base of the values in the sulu_validation.schemas parameter.
  */
-class CachedSchemaStorage extends SchemaStorage
+class CachedSchemaStorage extends SchemaStorage implements CachedSchemaStorageInterface
 {
     const FILE_PREFIX = 'file://';
 
@@ -99,19 +99,29 @@ class CachedSchemaStorage extends SchemaStorage
     }
 
     /**
-     * Returns a based on a given route id.
-     *
-     * @param string $routeId
-     *
-     * @return \stdClass
-     *
-     * @throws InvalidArgumentException
+     * {@inheritdoc}
      */
     public function getSchemaByRoute($routeId)
     {
+        if (!$this->initializeCache()) {
+            $this->initializeCache();
+        }
+
         $schemaFilePath = self::FILE_PREFIX . $this->fileLocator->locate($this->configuredSchemas[$routeId]);
 
         return $this->getSchema($schemaFilePath);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchema($id)
+    {
+        if (!$this->initializeCache()) {
+            $this->initializeCache();
+        }
+
+        return parent::getSchema($id);
     }
 
     /**
@@ -127,8 +137,6 @@ class CachedSchemaStorage extends SchemaStorage
      */
     protected function processSchema($schemaPath, array &$serializedSchemas, array &$resources)
     {
-        $this->initializeCache();
-
         if (array_key_exists($schemaPath, $serializedSchemas)) {
             return;
         }

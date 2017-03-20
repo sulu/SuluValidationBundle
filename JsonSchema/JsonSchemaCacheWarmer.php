@@ -19,11 +19,11 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 class JsonSchemaCacheWarmer implements CacheWarmerInterface
 {
     /**
-     * @var CachedSchemaStorage
+     * @var CachedSchemaStorageInterface
      */
     private $cachedSchemaStorage;
 
-    public function __construct(CachedSchemaStorage $cachedSchemaStorage)
+    public function __construct(CachedSchemaStorageInterface $cachedSchemaStorage)
     {
         $this->cachedSchemaStorage = $cachedSchemaStorage;
     }

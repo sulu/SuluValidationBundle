@@ -12,9 +12,8 @@
 namespace Sulu\Bundle\ValidationBundle\EventListener;
 
 use JsonSchema\Constraints\Factory;
-use JsonSchema\SchemaStorageInterface;
 use JsonSchema\Validator;
-use Sulu\Bundle\ValidationBundle\JsonSchema\CachedSchemaStorage;
+use Sulu\Bundle\ValidationBundle\JsonSchema\CachedSchemaStorageInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
@@ -30,15 +29,15 @@ class ValidationRequestListener
     private $schemas;
 
     /**
-     * @var CachedSchemaStorage
+     * @var CachedSchemaStorageInterface
      */
     private $schemaStorage;
 
     /**
      * @param array $schemas
-     * @param SchemaStorageInterface $schemaStorage
+     * @param CachedSchemaStorageInterface $schemaStorage
      */
-    public function __construct(array $schemas, SchemaStorageInterface $schemaStorage)
+    public function __construct(array $schemas, CachedSchemaStorageInterface $schemaStorage)
     {
         $this->schemas = $schemas;
         $this->schemaStorage = $schemaStorage;
