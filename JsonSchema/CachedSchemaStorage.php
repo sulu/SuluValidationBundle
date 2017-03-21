@@ -79,23 +79,25 @@ class CachedSchemaStorage extends SchemaStorage implements CachedSchemaStorageIn
      */
     public function initializeCache()
     {
-        if (!$this->isInitialized) {
-            $schemaCache = new ConfigCache($this->cacheFilePath, $this->debugMode);
+        if ($this->isInitialized) {
+            return;
+        }
 
-            if (!$schemaCache->isFresh()) {
-                $resources = [];
-                $processedSchemas = [];
+        $schemaCache = new ConfigCache($this->cacheFilePath, $this->debugMode);
 
-                foreach ($this->configuredSchemas as $schemaPath) {
-                    $this->processSchema($schemaPath, $processedSchemas, $resources);
-                }
+        if (!$schemaCache->isFresh()) {
+            $resources = [];
+            $processedSchemas = [];
 
-                $schemaCache->write(serialize($processedSchemas), $resources);
+            foreach ($this->configuredSchemas as $schemaPath) {
+                $this->processSchema($schemaPath, $processedSchemas, $resources);
             }
 
-            $this->schemas = unserialize(file_get_contents($schemaCache->getPath()));
-            $this->isInitialized = true;
+            $schemaCache->write(serialize($processedSchemas), $resources);
         }
+
+        $this->schemas = unserialize(file_get_contents($schemaCache->getPath()));
+        $this->isInitialized = true;
     }
 
     /**
