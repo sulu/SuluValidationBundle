@@ -1,6 +1,6 @@
 {
     "name": "sulu/validation-bundle",
-    "type": "validation-bundle",
+    "type": "symfony-bundle",
     "description": "This bundle is for validation of schemas",
     "license": "MIT",
     "keywords": ["sulu", "schema", "validation"],
