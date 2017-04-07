@@ -13,11 +13,6 @@ test_post_validation:
     defaults:
         _controller: app.tests.controller:testValidationAction
 
-test_invalid_schema:
-    path: /invalid-schema
-    defaults:
-        _controller: app.tests.controller:testValidationAction
-
 test_schema_with_inline_refs:
     path: /schema-with-inline-refs
     defaults:

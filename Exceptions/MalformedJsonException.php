@@ -12,15 +12,15 @@
 namespace Sulu\Bundle\ValidationBundle\Exceptions;
 
 /**
- * Exception that indicates that schema validation was not successful.
+ * This exception is thrown when a malformed json is encountered.
  */
-class SchemaValidationException extends \Exception
+class MalformedJsonException extends \Exception
 {
     /**
-     * @param array $errors
+     * @param string $message
      */
-    public function __construct(array $errors)
+    public function __construct($message)
     {
-        parent::__construct(json_encode($errors));
+        parent::__construct($message);
     }
 }

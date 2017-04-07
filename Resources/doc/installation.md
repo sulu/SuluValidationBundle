@@ -74,3 +74,13 @@ sulu_validation:
     schemas:
         example_route_id: '@AnotherBundle/Validation/anotherActionSchema.json'
 ```
+
+## Overwrite default schema cache file
+
+To overwrite the default path for the schema cache file set the following parameter in your applications configuration 
+file:
+
+```yml
+sulu_validation:
+    schema_cache: 'path/to/the/prefered/location/schemaCache.php'
+```

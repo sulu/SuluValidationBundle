@@ -32,6 +32,9 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('schemas')
                     ->prototype('scalar')->end()
                 ->end()
+                ->scalarNode('schema_cache')
+                    ->defaultValue('%kernel.cache_dir%/schema/jsonSchemaCache.php')
+                ->end()
             ->end();
 
         return $treeBuilder;
