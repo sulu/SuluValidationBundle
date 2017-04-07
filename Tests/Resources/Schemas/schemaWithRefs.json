@@ -1,0 +1,20 @@
+{
+  "title": "Schema for test validation with refs",
+  "type": "object",
+  "properties": {
+    "billingAddress": {
+      "type": {
+        "$ref": "SubSchema/addressSchema.json#/definitions/address"
+      }
+    },
+    "shippingAddress": {
+      "type": {
+        "$ref": "SubSchema/addressSchema.json#/definitions/address"
+      }
+    }
+  },
+  "required": [
+    "billingAddress",
+    "shippingAddress"
+  ]
+}

@@ -1,6 +1,6 @@
 {
     "name": "sulu/validation-bundle",
-    "type": "validation-bundle",
+    "type": "symfony-bundle",
     "description": "This bundle is for validation of schemas",
     "license": "MIT",
     "keywords": ["sulu", "schema", "validation"],
@@ -21,7 +21,8 @@
         "symfony/yaml": "~2.8 || ~3.2",
         "symfony/css-selector": "~2.8 || ~3.2",
         "phpunit/phpunit": "~4.8 || ~5.7",
-        "symfony/browser-kit": "~2.8 || ~3.2"
+        "symfony/browser-kit": "~2.8 || ~3.2",
+        "symfony/console": "~2.8 || ~3.2"
     },
     "autoload": {
         "psr-0": {
